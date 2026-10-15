@@ -2,10 +2,17 @@
   "block.sunlight_power.solar_panel": "阳光动力 I",
   "item.sunlight_power.solar_panel": "阳光动力 I",
   "itemGroup.sunlight_power.main": "阳光动力",
+  "tooltip.sunlight_power.generation": "峰值发电：%s FE/tick",
+  "tooltip.sunlight_power.capacity": "最大储能：%s FE",
+  "tooltip.sunlight_power.output": "单面输出上限：%s FE/tick",
   "gui.sunlight_power.stored": "已存储：%s FE",
   "gui.sunlight_power.stored_total": "已存储：%s/%s FE",
   "gui.sunlight_power.capacity": "容量：%s FE",
   "gui.sunlight_power.generation": "生成：%s FE/tick",
   "gui.sunlight_power.efficiency": "效率：%s%%",
-  "gui.sunlight_power.sun_intensity": "光照等级：%s%%"
+  "gui.sunlight_power.sun_intensity": "光照等级：%s%%",
+  "gui.sunlight_power.charging_slot": "物品充电",
+  "gui.sunlight_power.charging_empty": "充电槽为空",
+  "gui.sunlight_power.charging_occupied": "已放入物品",
+  "gui.sunlight_power.charging_hint": "在此放入一件可充电物品。"
 }

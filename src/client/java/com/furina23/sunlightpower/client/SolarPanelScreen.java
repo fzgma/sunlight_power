@@ -30,9 +30,6 @@ public final class SolarPanelScreen extends AbstractContainerScreen<SolarPanelMe
         drawGauge(graphics, SUN_X, 32, intensity(), mouseX, mouseY);
         drawGauge(graphics, ENERGY_X, 0, menu.capacity() > 0
                 ? (double) menu.energy() / menu.capacity() : 0, mouseX, mouseY);
-        for (int i = 0; i < 5; i++) {
-            graphics.blit(ELEMENTS, leftPos + 8 + i * 18, topPos + 60, 18, 0, 18, 18);
-        }
         graphics.blit(ELEMENTS, leftPos + 150, topPos + 8, 18, 18, 18, 18);
     }
 
@@ -75,6 +72,11 @@ public final class SolarPanelScreen extends AbstractContainerScreen<SolarPanelMe
         graphics.drawString(font, Component.translatable("gui.sunlight_power.efficiency",
                 Math.round(100 * intensity())), 0, 30, 0x404040, false);
         graphics.pose().popPose();
+        graphics.drawString(font, Component.translatable("gui.sunlight_power.charging_slot"),
+                8, 60, 0x404040, false);
+        graphics.drawString(font, Component.translatable(menu.getSlot(0).hasItem()
+                        ? "gui.sunlight_power.charging_occupied" : "gui.sunlight_power.charging_empty"),
+                8, 72, 0x606060, false);
     }
 
     @Override
@@ -83,7 +85,10 @@ public final class SolarPanelScreen extends AbstractContainerScreen<SolarPanelMe
         super.render(graphics, mouseX, mouseY, delta);
         renderTooltip(graphics, mouseX, mouseY);
         if (menu.getCarried().isEmpty()) {
-            if (isGaugeHovered(ENERGY_X, mouseX, mouseY)) {
+            if (hoveredSlot == menu.getSlot(0) && !hoveredSlot.hasItem()) {
+                graphics.renderTooltip(font, Component.translatable("gui.sunlight_power.charging_hint"),
+                        mouseX, mouseY);
+            } else if (isGaugeHovered(ENERGY_X, mouseX, mouseY)) {
                 graphics.renderTooltip(font, Component.translatable("gui.sunlight_power.stored_total",
                         menu.energy(), menu.capacity()), mouseX, mouseY);
             } else if (isGaugeHovered(SUN_X, mouseX, mouseY)) {

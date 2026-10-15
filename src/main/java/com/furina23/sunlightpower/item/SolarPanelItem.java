@@ -17,11 +17,11 @@ public final class SolarPanelItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("发电效率: " + SunlightPower.CONFIG.generationPerTick + " FE/tick")
+        tooltip.add(Component.translatable("tooltip.sunlight_power.generation", SunlightPower.CONFIG.generationPerTick)
                 .withStyle(ChatFormatting.YELLOW));
-        tooltip.add(Component.literal("最大储能: " + SunlightPower.CONFIG.capacity + " FE")
+        tooltip.add(Component.translatable("tooltip.sunlight_power.capacity", SunlightPower.CONFIG.capacity)
                 .withStyle(ChatFormatting.RED));
-        tooltip.add(Component.literal("输出上限: " + SunlightPower.CONFIG.maxOutputPerSide + " FE/tick")
+        tooltip.add(Component.translatable("tooltip.sunlight_power.output", SunlightPower.CONFIG.maxOutputPerSide)
                 .withStyle(ChatFormatting.GRAY));
     }
 }

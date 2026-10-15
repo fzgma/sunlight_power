@@ -2,6 +2,7 @@ package com.furina23.sunlightpower.block.entity;
 
 import com.furina23.sunlightpower.SunlightPower;
 import com.furina23.sunlightpower.logic.SolarGeneration;
+import com.furina23.sunlightpower.logic.SolarEnergyBuffer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class SolarPanelBlockEntity extends BlockEntity implements Container, ExtendedScreenHandlerFactory {
-    private long energy;
+    private final SolarEnergyBuffer energy = new SolarEnergyBuffer(this::setChanged);
     private long currentGeneration;
     private ItemStack chargingStack = ItemStack.EMPTY;
     private boolean interactionRequested;
@@ -41,32 +42,26 @@ public final class SolarPanelBlockEntity extends BlockEntity implements Containe
                 level.isRaining(), level.isThundering(), SunlightPower.CONFIG.generationPerTick,
                 SunlightPower.CONFIG.rainMultiplier, SunlightPower.CONFIG.thunderMultiplier);
         currentGeneration = generated;
-        if (generated > 0) {
-            energy = Math.min(SunlightPower.CONFIG.capacity, energy + generated);
-            setChanged();
-        }
-        if (energy > 0) {
-            long charged = SunlightPower.chargeSlot(this, Math.min(SunlightPower.CONFIG.chargingSlotRate, energy));
-            if (charged > 0) {
-                energy -= charged;
-                setChanged();
-            }
+        energy.addGeneration(generated, getCapacity());
+        if (getEnergy() > 0) {
+            SunlightPower.chargeSlot(this, Math.min(SunlightPower.CONFIG.chargingSlotRate, getEnergy()));
             for (Direction direction : Direction.values()) {
                 if (direction == Direction.UP) {
                     continue;
                 }
-                long transferred = SunlightPower.transferToFabric(this, direction,
-                        Math.min(SunlightPower.CONFIG.maxOutputPerSide, energy));
-                if (transferred > 0) {
-                    energy -= transferred;
-                    setChanged();
-                }
+                SunlightPower.transferToFabric(this, direction,
+                        Math.min(SunlightPower.CONFIG.maxOutputPerSide, getEnergy()));
             }
         }
+        SunlightPower.tickAe2(this);
         interactionRequested = false;
     }
 
     public long getEnergy() {
+        return energy.getAmount();
+    }
+
+    public SolarEnergyBuffer getEnergyBuffer() {
         return energy;
     }
 
@@ -79,8 +74,7 @@ public final class SolarPanelBlockEntity extends BlockEntity implements Containe
     }
 
     public void setEnergy(long value) {
-        energy = Math.max(0, Math.min(getCapacity(), value));
-        setChanged();
+        energy.setAmount(value, getCapacity());
     }
 
     public ItemStack getChargingStack() {
@@ -134,7 +128,7 @@ public final class SolarPanelBlockEntity extends BlockEntity implements Containe
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putLong("Energy", energy);
+        tag.putLong("Energy", getEnergy());
         if (!chargingStack.isEmpty()) {
             tag.put("ChargingStack", chargingStack.save(new CompoundTag()));
         }
@@ -144,12 +138,18 @@ public final class SolarPanelBlockEntity extends BlockEntity implements Containe
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        energy = Math.max(0, Math.min(SunlightPower.CONFIG.capacity, tag.getLong("Energy")));
+        energy.setAmount(tag.getLong("Energy"), getCapacity());
         chargingStack = tag.contains("ChargingStack") ? ItemStack.of(tag.getCompound("ChargingStack")) : ItemStack.EMPTY;
         if (chargingStack.getCount() > 1) {
             chargingStack.setCount(1);
         }
         SunlightPower.loadAe2(this, tag);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        SunlightPower.initializeAe2(this);
     }
 
     @Override

@@ -69,13 +69,16 @@ public final class SunlightPower implements ModInitializer {
     }
 
     public static long chargeSlot(SolarPanelBlockEntity panel, long amount) {
+        amount = Math.min(amount, panel.getEnergy());
         if (amount <= 0 || panel.getChargingStack().isEmpty()) return 0;
         if (FabricLoader.getInstance().isModLoaded("team_reborn_energy")) {
             long result = FabricEnergyCompat.chargeItem(panel, amount);
             if (result > 0) return result;
         }
         if (FabricLoader.getInstance().isModLoaded("ae2")) {
-            return Ae2Compat.chargeItem(panel.getChargingStack(), amount);
+            long result = Ae2Compat.chargeItem(panel.getChargingStack(), amount);
+            if (result > 0) panel.setEnergy(panel.getEnergy() - result);
+            return result;
         }
         return 0;
     }
@@ -86,9 +89,16 @@ public final class SunlightPower implements ModInitializer {
         return FabricLoader.getInstance().isModLoaded("ae2") && Ae2Compat.canChargeItem(stack);
     }
 
-    public static long transferToAe2(SolarPanelBlockEntity panel, long amount) {
-        if (!FabricLoader.getInstance().isModLoaded("ae2") || amount <= 0) return 0;
-        return Ae2Compat.transfer(panel, amount);
+    public static void initializeAe2(SolarPanelBlockEntity panel) {
+        if (FabricLoader.getInstance().isModLoaded("ae2")) {
+            Ae2Compat.initialize(panel);
+        }
+    }
+
+    public static void tickAe2(SolarPanelBlockEntity panel) {
+        if (FabricLoader.getInstance().isModLoaded("ae2")) {
+            Ae2Compat.tick(panel);
+        }
     }
 
     public static void removeAe2(SolarPanelBlockEntity panel) {

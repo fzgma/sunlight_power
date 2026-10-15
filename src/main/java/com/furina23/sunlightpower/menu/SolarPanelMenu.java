@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public final class SolarPanelMenu extends AbstractContainerMenu {
-    private final Container container;
+    private static final int PLAYER_INVENTORY_START = 1;
     private final ContainerLevelAccess access;
     private final ContainerData data;
 
@@ -39,18 +39,10 @@ public final class SolarPanelMenu extends AbstractContainerMenu {
     private SolarPanelMenu(int syncId, Inventory playerInventory, Container container,
                            ContainerLevelAccess access, ContainerData data) {
         super(SunlightPower.SOLAR_PANEL_MENU, syncId);
-        this.container = container;
         this.access = access;
         this.data = data;
         checkContainerSize(container, 1);
         addSlot(new ChargeSlot(container, 0, 151, 9));
-        Container upgrades = new SimpleContainer(5);
-        for (int i = 0; i < 5; i++) {
-            addSlot(new Slot(upgrades, i, 9 + i * 18, 61) {
-                @Override public boolean mayPlace(ItemStack stack) { return false; }
-                @Override public boolean mayPickup(Player player) { return false; }
-            });
-        }
         addPlayerInventory(playerInventory);
         addDataSlots(data);
     }
@@ -80,8 +72,8 @@ public final class SolarPanelMenu extends AbstractContainerMenu {
         ItemStack original = slot.getItem();
         ItemStack copy = original.copy();
         if (index == 0) {
-            if (!moveItemStackTo(original, 6, slots.size(), true)) return empty;
-        } else if (index >= 6 && !moveItemStackTo(original, 0, 1, false)) {
+            if (!moveItemStackTo(original, PLAYER_INVENTORY_START, slots.size(), true)) return empty;
+        } else if (!moveItemStackTo(original, 0, PLAYER_INVENTORY_START, false)) {
             return empty;
         }
         if (original.isEmpty()) slot.set(ItemStack.EMPTY);

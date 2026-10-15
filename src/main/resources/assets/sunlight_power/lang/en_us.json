@@ -2,10 +2,17 @@
   "block.sunlight_power.solar_panel": "Sunlight Power I",
   "item.sunlight_power.solar_panel": "Sunlight Power I",
   "itemGroup.sunlight_power.main": "Sunlight Power",
+  "tooltip.sunlight_power.generation": "Peak generation: %s FE/tick",
+  "tooltip.sunlight_power.capacity": "Maximum storage: %s FE",
+  "tooltip.sunlight_power.output": "Output per side: %s FE/tick",
   "gui.sunlight_power.stored": "Stored: %s FE",
   "gui.sunlight_power.stored_total": "Stored: %s/%s FE",
   "gui.sunlight_power.capacity": "Capacity: %s FE",
   "gui.sunlight_power.generation": "Generation: %s FE/tick",
   "gui.sunlight_power.efficiency": "Efficiency: %s%%",
-  "gui.sunlight_power.sun_intensity": "Light Level: %s%%"
+  "gui.sunlight_power.sun_intensity": "Light Level: %s%%",
+  "gui.sunlight_power.charging_slot": "Item charging",
+  "gui.sunlight_power.charging_empty": "Slot empty",
+  "gui.sunlight_power.charging_occupied": "Item inserted",
+  "gui.sunlight_power.charging_hint": "Place one rechargeable item here."
 }

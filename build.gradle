@@ -42,6 +42,8 @@ dependencies {
 	modCompileOnly "teamreborn:energy:${project.energy_version}"
 	modCompileOnly "appeng:appliedenergistics2-fabric:${project.ae2_version}"
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+	// Loom does not expose Minecraft's Gson library to the plain JUnit source set.
+	testImplementation 'com.google.code.gson:gson:2.10'
 }
 
 processResources {
